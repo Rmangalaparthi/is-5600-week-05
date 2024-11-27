@@ -22,3 +22,22 @@ app.post('/products', api.createProduct)
 // Boot the server
 app.listen(port, () => console.log(`Server listening on port ${port}`))
 
+// app.js
+const express = require('express');
+const api = require('./api');
+const app = express();
+
+app.use(express.json());
+
+// Order routes
+app.get('/orders', api.listOrders); // List orders
+app.get('/orders/:id', api.getOrder); // Get a specific order
+app.post('/orders', api.createOrder); // Create a new order
+app.put('/orders/:id', api.editOrder); // Update an order
+app.delete('/orders/:id', api.deleteOrder); // Delete an order
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

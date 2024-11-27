@@ -83,3 +83,100 @@ module.exports = autoCatch({
   editProduct,
   deleteProduct
 });
+// api.js
+const Orders = require('./orders');
+
+/**
+ * List orders
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function listOrders(req, res, next) {
+  try {
+    const { offset = 0, limit = 25, productId, status } = req.query;
+
+    const orders = await Orders.list({
+      offset: Number(offset),
+      limit: Number(limit),
+      productId,
+      status,
+    });
+
+    res.json(orders);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get a single order
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function getOrder(req, res, next) {
+  try {
+    const order = await Orders.get(req.params.id);
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+    res.json(order);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Create an order
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function createOrder(req, res, next) {
+  try {
+    const order = await Orders.create(req.body);
+    res.status(201).json(order);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Edit an order
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function editOrder(req, res, next) {
+  try {
+    const change = req.body;
+    const order = await Orders.edit(req.params.id, change);
+    res.json(order);
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Delete an order
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ */
+async function deleteOrder(req, res, next) {
+  try {
+    await Orders.destroy(req.params.id);
+    res.json({ success: true, message: 'Order deleted successfully.' });
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  listOrders,
+  getOrder,
+  createOrder,
+  editOrder,
+  deleteOrder,
+};
